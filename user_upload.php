@@ -44,7 +44,36 @@ if ($conn->query($sql) === TRUE) {
 } else {
   echo "Error creating table: " . $conn->error;
 }
+// open CSV file with read-only mode
+$csv_file = fopen("users.csv", 'r');
+ 
+// Skip the first line
+fgetcsv($csv_file);
 
+// Parse data from CSV file line by line
+while (($getData = fgetcsv($csv_file, 10000, ",")) !== FALSE)
+{
+    // Get row data
+    $name = ucfirst(strtolower(preg_replace('/[^A-Za-z]/', '',$getData[0])));
+    $surname =ucfirst(strtolower(preg_replace('/[^A-Za-z\']/', '',$getData[1])));
+    $email = strtolower(preg_replace('/[^A-Za-z0-9\@\.]/', '',$getData[2]));
+    $surname = str_replace("'", "\'", $surname);
 
-// $conn->close();
+    // If user already exists in the database with the same email
+    $email_check = $conn->query("SELECT id FROM users WHERE email = '" . $getData[2] . "'");
+
+    if ($email_check->num_rows > 0)
+    {
+        $conn->query("UPDATE users SET name = '" . $name . "', surname = '" . $surname . "', WHERE email = '" . $email . "'");
+    }
+    else
+    {
+         $conn->query("INSERT INTO users (name, surname, email) VALUES ('" . $name . "', '" . $surname . "', '" . $email . "')");
+
+    }
+}
+
+// Close csv file
+fclose($csv_file);
+
 ?>
