@@ -171,6 +171,7 @@ function fileParser($filename, $conn, $flag)
             {
                 if ($email_check->num_rows > 0)
                 {
+                    echo $email.' already exists in the database'."\n";
                     $conn->query("UPDATE users SET name = '" . $name . "', surname = '" . $surname . "', WHERE email = '" . $email . "'");
                 }
                 else
