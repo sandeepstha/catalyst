@@ -2,8 +2,6 @@
 
 $options = getopt("h:p:u:", ["file:","create_table","dry_run","help"]);
 
-$dbname = "catalyst_db";
-
 if(isset($options['file']) && !array_key_exists("dry_run",$options))
 {
     list($hostname, $username, $password, $status) = checkConnection($options);
